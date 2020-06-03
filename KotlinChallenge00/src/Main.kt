@@ -26,7 +26,7 @@ val pricesArray = Array(productsAndPrices.size) { 0.0 }
 
 
 fun main() {
-    setProductsAndPricesArray()
+    updateProductsAndPricesArray()
 
     getCustomerData()
 
@@ -35,8 +35,8 @@ fun main() {
     createBill()
 }
 
-
-fun setProductsAndPricesArray() {
+        // *** Initial setter functions
+fun updateProductsAndPricesArray() {
     var index = 0
     productsAndPrices.forEach {
         pricesArray[index] = it.value
@@ -45,7 +45,69 @@ fun setProductsAndPricesArray() {
     }
 }
 
+        // *** Business logic functions
+
+fun purchaseSimulation() {
+    var continueShopping = true;
+    var product = 0
+    var quantity = 0
+
+    showProductsAndPrices()
+
+    do {
+        print("\nAdd to cart (0 -> exit): ")
+        product = readLine()?.toInt() ?: -1
+
+        when(product) {
+            0 -> {continueShopping = false}
+            in 1 .. 5 -> {
+                print("Quantity: ")
+                quantity = readLine()?.toInt() ?: -1
+                purchaseProduct(product, quantity)
+            }
+            else -> println("Error! Please try again")
+        }
+    } while (continueShopping)
+}
+
+fun showProductsAndPrices() {
+    var i = 1
+    println("\n *** Products catalog *** ")
+    productsAndPrices.forEach {
+        println("${i++}. ${it.key} \t\t\t ${it.value}")
+    }
+}
+
+fun purchaseProduct(product : Int, quantity : Int) {
+    productsQuantity[product-1] += quantity
+}
+
+fun createBill() {
+    var total = 0.0
+
+    println("\n-----------------------" +
+            "\n\t *** YOUR BILL *** ")
+    println("\nItem \t\t # \t\t $ \t\t Total")
+
+    for ((index, itemQuantity) in productsQuantity.withIndex()) {
+        total += itemQuantity * pricesArray[index]
+
+
+        if (itemQuantity > 0) {
+            println("${productsArray[index]} \t\t ${itemQuantity} \t\t ${pricesArray[index]} \t\t ${itemQuantity * pricesArray[index]}")
+        }
+    }
+    println("\n-----------------------" +
+            "\nSubtotal: $ ${total}")
+    println("Tax : $ ${total * tax}")
+    println("Total: $ ${total*(1+tax)}" +
+            "\n-----------------------")
+}
+
+        // *** Customer data getters ***
+
 fun getCustomerData() {
+    println("\n *** Add customer data *** ")
     customerData[0] = getCustomerName()
     customerData[1] = getCustomerBirthday()
     customerData[2] = getCustomerContactNumber()
@@ -64,58 +126,10 @@ fun getCustomerContactNumber() : String {
     return readLine() ?: ""
 }
 
-fun purchaseSimulation() {
-    var continueShopping = true;
-    var product = 0
-    var quantity = 0
+        // *** Adding products functions
 
-    showProductsAndPrices()
-
-    do {
-        print("Add to cart (0 -> exit): ")
-        product = readLine()?.toInt() ?: -1
-
-        when(product) {
-            0 -> {continueShopping = false}
-            in 1 .. 5 -> {
-                print("#: ")
-                quantity = readLine()?.toInt() ?: -1
-                purchaseProduct(product, quantity)
-            }
-            else -> print("Error!")
-        }
-    } while (continueShopping)
+fun addProduct(product: String, price: Double) {
+    // this fun will not work, because productsArray and pricesArray initial size
+    productsAndPrices.put(product, price)
+    updateProductsAndPricesArray()
 }
-
-fun showProductsAndPrices() {
-    var i = 1
-    productsAndPrices.forEach {
-        println("${i++}. ${it.key} \t\t\t ${it.value}")
-    }
-}
-
-fun purchaseProduct(product : Int, quantity : Int) {
-    productsQuantity[product-1] += quantity
-}
-
-fun createBill() {
-    var total = 0.0
-
-    println("Item \t # \t $ \t Total")
-
-    for ((index, itemQuantity) in productsQuantity.withIndex()) {
-        total += itemQuantity * pricesArray[index]
-
-
-        if (itemQuantity > 0) {
-            println("${productsArray[index]} \t ${itemQuantity} \t ${pricesArray[index]} \t ${itemQuantity * pricesArray[index]}")
-        }
-    }
-    println("Total: $ ${total}")
-}
-
-// TODO: adding products functions
-// TODO: adding tax to total
-// TODO: UX
-
-
