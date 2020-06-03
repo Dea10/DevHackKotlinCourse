@@ -19,10 +19,11 @@ val productsAndPrices = mutableMapOf(
     "Hoodie" to 160.0,
     "Sweater" to 106.0
     )
+val arraySize = productsAndPrices.size
 
-val productsQuantity = Array(productsAndPrices.size){ 0 }
-val productsArray = Array(productsAndPrices.size) { "" }
-val pricesArray = Array(productsAndPrices.size) { 0.0 }
+val productsQuantity = Array(arraySize){ 0 }
+val productsArray = Array(arraySize) { "" }
+val pricesArray = Array(arraySize) { 0.0 }
 
 
 fun main() {
@@ -60,7 +61,7 @@ fun purchaseSimulation() {
 
         when(product) {
             0 -> {continueShopping = false}
-            in 1 .. 5 -> {
+            in 1 .. arraySize -> {
                 print("Quantity: ")
                 quantity = readLine()?.toInt() ?: -1
                 purchaseProduct(product, quantity)
