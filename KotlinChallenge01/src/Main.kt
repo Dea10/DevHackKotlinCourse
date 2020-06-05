@@ -13,8 +13,7 @@ fun main() {
     // setup environment
     val itemCatalog = DataSetter.setCatalog()
     val customer = DataSetter.setCustomer()
-
-    val shop = Shop()
+    val shop = DataSetter.setShop()
 
     shop.newBill(customer, itemCatalog)
     shop.printCustomerBills(customer)
@@ -53,6 +52,10 @@ object DataSetter {
             )
         )
     }
+
+    fun setShop() : Shop {
+        return Shop()
+    }
 }
 
 data class Customer(val name : String = "",
@@ -76,7 +79,8 @@ class ItemCatalog(val items : MutableList<Item>) {
 class Bill() {
     var purchasedItems = mutableListOf<Item>()
 
-    fun addProduct(item : Item, quantity : Int) {
+    /* I'd like to get an item and a quantity and just assign that to a pair<k, v>, to avoid creating n items in memory*/
+    fun addItem(item : Item, quantity : Int) {
         for (i in 1..quantity)
         purchasedItems.plusAssign(item)
     }
@@ -99,8 +103,6 @@ class Bill() {
         println("\t-----------------------")
     }
 }
-
-
 
 class Shop() {
 
@@ -139,22 +141,23 @@ class Shop() {
 
         do {
             print("Add to cart (0 -> exit): ")
-            var productId = readLine()?.toInt() ?: -1
+            var itemId = readLine()?.toInt() ?: -1
 
-            var exist = validateProductId(itemCatalog, productId)
+            var exist = validateItemId(itemCatalog, itemId)
 
-            if (productId == 0) {
+            /* I have a hunch that this could be better => maybe not using nested if's*/
+            if (itemId == 0) {
                 continueShopping = false
                 println(" *** Bill closed! ***")
             } else {
                 if (exist) {
                     print("Quantity: ")
                     var quantity = readLine()?.toInt() ?: -1
-                    var products = itemCatalog.items.filter {
-                        it.id == productId
+                    var items = itemCatalog.items.filter {
+                        it.id == itemId
                     }
 
-                    bill.addProduct(products[0], quantity)
+                    bill.addItem(items[0], quantity)
                 } else {
                     println("Error: Item not found!!!")
                 }
@@ -170,9 +173,9 @@ class Shop() {
         }
     }
 
-    private fun validateProductId(itemCatalog: ItemCatalog, productId: Int): Boolean {
+    private fun validateItemId(itemCatalog: ItemCatalog, itemId: Int): Boolean {
         itemCatalog.items.forEach {
-            if (it.id == productId) {
+            if (it.id == itemId) {
                 return true
             }
         }
