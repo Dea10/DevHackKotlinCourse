@@ -69,6 +69,7 @@ class ItemCatalog(val items : MutableList<Item>) {
         items.forEach {
             println("${it.id} \t ${it.itemName} \t ${it.price}")
         }
+        println()
     }
 }
 
@@ -82,11 +83,20 @@ class Bill() {
 
     fun printBill() {
 
+        var total = 0.0
         val itemsCount = purchasedItems.groupingBy {it}.eachCount()
 
+        println("\n\t------ Your Bill ------")
+        println("\n\tItem \t\t # \t\t $ \t\t Total")
+
         purchasedItems.distinct().forEach {
-            println("${itemsCount.getValue(it)} \t ${it.itemName} \t ${it.price}")
+            total += itemsCount.getValue(it) * it.price
+            println("\t ${it.itemName} \t ${itemsCount.getValue(it)} \t ${it.price} \t ${itemsCount.getValue(it) * it.price}")
         }
+
+        println("\nSub total:  ${total}")
+        println("Total: ${total * (Shop.TAX + 1)}")
+        println("\t-----------------------")
     }
 }
 
@@ -94,12 +104,14 @@ class Bill() {
 
 class Shop() {
 
-    val tax = 0.10
+    companion object {
+        const val TAX = 0.10
+    }
 
     fun newBill(customer : Customer, itemCatalog: ItemCatalog) {
         var continueShopping = true;
         do {
-            println("\nNew bill opened :)")
+            println("\n *** New bill opened :) *** ")
 
             var bill = purchaseSimulation(itemCatalog)
             customer.bills.add(bill)
@@ -110,7 +122,7 @@ class Shop() {
 
             if (readLine()?.toInt() ?: -1 == 0){
                 continueShopping = false
-                println("Good bye!")
+                println(" *** Good bye! ***")
             }
 
         } while (continueShopping)
@@ -129,17 +141,23 @@ class Shop() {
             print("Add to cart (0 -> exit): ")
             var productId = readLine()?.toInt() ?: -1
 
+            var exist = validateProductId(itemCatalog, productId)
+
             if (productId == 0) {
                 continueShopping = false
-                println("Bill closed!")
+                println(" *** Bill closed! ***")
             } else {
-                print("Quantity: ")
-                var quantity = readLine()?.toInt() ?: -1
-                var products = itemCatalog.items.filter {
-                    it.id == productId
-                }
+                if (exist) {
+                    print("Quantity: ")
+                    var quantity = readLine()?.toInt() ?: -1
+                    var products = itemCatalog.items.filter {
+                        it.id == productId
+                    }
 
-                bill.addProduct(products[0], quantity)
+                    bill.addProduct(products[0], quantity)
+                } else {
+                    println("Error: Item not found!!!")
+                }
             }
         } while (continueShopping)
 
@@ -150,5 +168,14 @@ class Shop() {
         customer.bills.forEach {
             it.printBill()
         }
+    }
+
+    private fun validateProductId(itemCatalog: ItemCatalog, productId: Int): Boolean {
+        itemCatalog.items.forEach {
+            if (it.id == productId) {
+                return true
+            }
+        }
+        return false
     }
 }
