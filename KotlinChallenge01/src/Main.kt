@@ -1,3 +1,6 @@
+import java.lang.Exception
+import java.lang.NumberFormatException
+
 /*
 Crea un programa para una tienda de ropa que permita:
     Pedir datos del cliente (nombres, fecha de nacimiento y número de contacto)
@@ -58,9 +61,9 @@ object DataSetter {
     }
 }
 
-data class Customer(val name : String = "",
-                    val birthday : String = "",
-                    val contact : String = "",
+data class Customer(val name : String = "no_name",
+                    val birthday : String = "no_birthday",
+                    val contact : String = "no_contact",
                     val bills : MutableList<Bill> = mutableListOf()
 )
 
@@ -140,8 +143,13 @@ class Shop() {
         itemCatalog.showCatalog()
 
         do {
+            var itemId = -1
             print("Add to cart (0 -> exit): ")
-            var itemId = readLine()?.toInt() ?: -1
+            try {
+                itemId = readLine()?.toInt() ?: -1
+            } catch (e: NumberFormatException) {
+                println("Error! Not a valid input")
+            }
 
             var exist = validateItemId(itemCatalog, itemId)
 
@@ -151,8 +159,17 @@ class Shop() {
                 println(" *** Bill closed! ***")
             } else {
                 if (exist) {
+                    var quantity = 0
                     print("Quantity: ")
-                    var quantity = readLine()?.toInt() ?: -1
+                    try {
+                        quantity = readLine()?.toInt() ?: -1
+                        if(quantity < 0){
+                            throw NumberFormatException()
+                        }
+                    } catch (e: NumberFormatException) {
+                        println("Error! Not a valid input")
+                    }
+
                     var items = itemCatalog.items.filter {
                         it.id == itemId
                     }
