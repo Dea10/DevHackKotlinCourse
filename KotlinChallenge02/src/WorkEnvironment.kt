@@ -39,9 +39,10 @@ class WorkEnvironment() {
     fun listTasksByUser() {
         users.forEach { user ->
             user.value.tasks.forEach {task ->
-                println("${user.value.name} - ${task.value.id} ${task.value.title} - ${task.value.status}")
+                println("User: ${user.value.name} \t ${task.value.id}: ${task.value.title} \t Status: ${task.value.status}")
             }
         }
+        println("\n")
     }
 
     fun changeStatus(taskId: Int, newStatus: STATUS) {

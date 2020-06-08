@@ -1,20 +1,15 @@
 import java.lang.NumberFormatException
 
-/*
-* ToDo app
-*  User
-*  Task*/
-
 fun main() {
     val workEnvironment = WorkEnvironment();
-    var exit = true
+    var exit: Boolean
 
     workEnvironment.createUser("Test User")
     workEnvironment.createTask(workEnvironment.getUserById(1), "Task00")
 
     do {
         showMenu()
-        runMainApp(getUserInput(), workEnvironment)
+        exit = runMainApp(getUserInput(), workEnvironment)
     } while (exit)
 
 }
@@ -46,21 +41,23 @@ fun getUserInput(): Int{
     return userInput
 }
 
-fun runMainApp(userInput: Int, workEnvironment: WorkEnvironment) {
+fun runMainApp(userInput: Int, workEnvironment: WorkEnvironment): Boolean {
     when(userInput) {
         1 -> createUser(workEnvironment)
         2 -> createTask(workEnvironment)
         3 -> changeTaskStatus(workEnvironment)
         4 -> reassignTask(workEnvironment)
         5 -> listTasks(workEnvironment)
+        0 -> return false
     }
+    return true
 }
 
 fun createUser(workEnvironment: WorkEnvironment) {
     print("User name: ")
     val userName = readLine() ?: "user"
     workEnvironment.createUser(userName)
-    println("User created!")
+    println("User created!\n\n")
 }
 
 fun createTask(workEnvironment: WorkEnvironment) {
@@ -114,7 +111,7 @@ fun changeTaskStatus(workEnvironment: WorkEnvironment) {
     }
 
     workEnvironment.changeStatus(taskId, STATUS.values().get(statusId))
-    println("Status changed!")
+    println("Status changed!\n\n")
 }
 
 fun reassignTask(workEnvironment: WorkEnvironment) {
@@ -155,4 +152,5 @@ fun reassignTask(workEnvironment: WorkEnvironment) {
     }
 
     workEnvironment.reassignTask(oldUserId, newUserId, taskId)
+    println("Task reassigned!\n\n")
 }
