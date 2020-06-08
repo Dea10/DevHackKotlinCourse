@@ -24,9 +24,6 @@ class WorkEnvironment() {
         }
     }
 
-    fun getUserById(userId: Int): User = users[userId]!!
-    fun getTaskById(taskId: Int): Task = tasks[taskId]!!
-
     fun createTask(user: User, taskTitle: String) {
         val task = Task(++tasksCount, taskTitle)
         tasks.put(tasksCount, task)
@@ -42,7 +39,7 @@ class WorkEnvironment() {
     fun listTasksByUser() {
         users.forEach { user ->
             user.value.tasks.forEach {task ->
-                println("${user.value.name} - ${task.value.title} - ${task.value.status}")
+                println("${user.value.name} - ${task.value.id} ${task.value.title} - ${task.value.status}")
             }
         }
     }
@@ -63,4 +60,19 @@ class WorkEnvironment() {
         }
     }
 
+    fun reassignTask(oldUserId: Int, newUserId: Int, taskId: Int) {
+        val task = getTaskById(taskId)
+        val oldUser = getUserById(oldUserId)
+        val newUser = getUserById(newUserId)
+        // delete task
+        oldUser.tasks.remove(taskId)
+        assignTask(newUser, task)
+    }
+
+    fun assignTask(user: User, task: Task) {
+        user.tasks.put(task.id, task)
+    }
+
+    fun getUserById(userId: Int): User = users[userId]!!
+    fun getTaskById(taskId: Int): Task = tasks[taskId]!!
 }

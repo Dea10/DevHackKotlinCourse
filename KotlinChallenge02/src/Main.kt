@@ -11,21 +11,6 @@ fun main() {
 
     workEnvironment.createUser("Test User")
     workEnvironment.createTask(workEnvironment.getUserById(1), "Task00")
-/*
-    workEnvironment.createUser("Daniel")
-
-
-    workEnvironment.listUsers();
-
-    workEnvironment.createTask(mutableListOf(workEnvironment.getUserById(1)), "Task00")
-
-    workEnvironment.listTasksByUser()
-    workEnvironment.listTasks()
-
-    workEnvironment.changeStatus(1, STATUS.INPROGRESS)
-    workEnvironment.listTasks()
-    workEnvironment.listTasksByUser()
- */
 
     do {
         showMenu()
@@ -66,7 +51,7 @@ fun runMainApp(userInput: Int, workEnvironment: WorkEnvironment) {
         1 -> createUser(workEnvironment)
         2 -> createTask(workEnvironment)
         3 -> changeTaskStatus(workEnvironment)
-        4 -> println("comming soon")
+        4 -> reassignTask(workEnvironment)
         5 -> listTasks(workEnvironment)
     }
 }
@@ -104,9 +89,70 @@ fun listTasks(workEnvironment: WorkEnvironment) {
 fun changeTaskStatus(workEnvironment: WorkEnvironment) {
     // list tasks
     workEnvironment.listTasks()
-    // read input
+    print("Select task id: ")
+    var taskId = 0
+    try {
+        taskId = readLine()?.toInt() ?: -1
+        if(taskId < 0){
+            throw NumberFormatException()
+        }
+    } catch (e: NumberFormatException) {
+        println("Error! Not a valid input")
+    }
+
     // list status
     workEnvironment.listStatus()
-    // read input
-    //workEnvironment.changeStatus(taskId, newStatus)
+    print("Select status: ")
+    var statusId = 0
+    try {
+        statusId = readLine()?.toInt() ?: -1
+        if(statusId < 0){
+            throw NumberFormatException()
+        }
+    } catch (e: NumberFormatException) {
+        println("Error! Not a valid input")
+    }
+
+    workEnvironment.changeStatus(taskId, STATUS.values().get(statusId))
+    println("Status changed!")
+}
+
+fun reassignTask(workEnvironment: WorkEnvironment) {
+    var oldUserId = 0
+    var newUserId = 0
+    var taskId = 0
+
+    workEnvironment.listTasksByUser()
+    print("Task id: ")
+    try {
+        taskId = readLine()?.toInt() ?: -1
+        if(taskId < 0){
+            throw NumberFormatException()
+        }
+    } catch (e: NumberFormatException) {
+        println("Error! Not a valid input")
+    }
+
+    workEnvironment.listUsers()
+    print("Old user: ")
+    try {
+        oldUserId = readLine()?.toInt() ?: -1
+        if(oldUserId < 0){
+            throw NumberFormatException()
+        }
+    } catch (e: NumberFormatException) {
+        println("Error! Not a valid input")
+    }
+
+    print("New user: ")
+    try {
+        newUserId = readLine()?.toInt() ?: -1
+        if(newUserId < 0){
+            throw NumberFormatException()
+        }
+    } catch (e: NumberFormatException) {
+        println("Error! Not a valid input")
+    }
+
+    workEnvironment.reassignTask(oldUserId, newUserId, taskId)
 }
