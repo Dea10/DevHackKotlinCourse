@@ -7,6 +7,12 @@ class WorkEnvironment() {
         var tasksCount = 0
     }
 
+    fun listStatus() {
+        STATUS.values().forEach {
+            println("${it.ordinal} - ${it.name}")
+        }
+    }
+
     fun createUser(name: String) {
         val user = User(++usersCount, name)
         users.put(usersCount, user)
@@ -21,12 +27,10 @@ class WorkEnvironment() {
     fun getUserById(userId: Int): User = users[userId]!!
     fun getTaskById(taskId: Int): Task = tasks[taskId]!!
 
-    fun createTask(users: List<User>, taskTitle: String) {
+    fun createTask(user: User, taskTitle: String) {
         val task = Task(++tasksCount, taskTitle)
         tasks.put(tasksCount, task)
-        users.forEach {
-            it.tasks.put(tasksCount, task)
-        }
+        user.tasks.put(tasksCount, task)
     }
 
     fun listTasks() {
